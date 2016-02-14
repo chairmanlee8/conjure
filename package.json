@@ -1,0 +1,19 @@
+{
+  "name": "monomerjs",
+  "version": "0.0.1",
+  "description": "MonomerJS frontend web framework, part of the Monomer family of full-stack tooling",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smiley325/monomerjs.git"
+  },
+  "author": "Andrew Lee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/smiley325/monomerjs/issues"
+  },
+  "homepage": "https://github.com/smiley325/monomerjs#readme"
+}
