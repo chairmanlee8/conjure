@@ -1,19 +1,27 @@
 {
-  "name": "monomerjs",
+  "name": "conjure",
   "version": "0.0.1",
-  "description": "MonomerJS frontend web framework, part of the Monomer family of full-stack tooling",
+  "description": "Minimal, modern frontend framework for web applications.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smiley325/monomerjs.git"
+    "url": "git+https://github.com/smiley325/conjure.git"
   },
   "author": "Andrew Lee",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/smiley325/monomerjs/issues"
+    "url": "https://github.com/smiley325/conjure/issues"
   },
-  "homepage": "https://github.com/smiley325/monomerjs#readme"
+  "homepage": "https://github.com/smiley325/conjure#readme",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.6.0",
+    "babelify": "^7.2.0",
+    "browserify": "^13.0.0",
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-tap": "^0.1.3"
+  }
 }

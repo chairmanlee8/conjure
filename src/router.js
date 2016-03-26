@@ -6,8 +6,9 @@
 
 'use strict';
 
-module.exports = {
+export default {
     configure: configure,
+    getCurrent: getCurrent,
     set: set,
     go: set,                  // alias for set()
     back: back,
@@ -16,7 +17,20 @@ module.exports = {
 }
 
 var CONFIG = [];
+var CURRENT_STATE = null;
 
+function getCurrent () {
+    return CURRENT_STATE;
+}
+
+/**
+ * Configure URL routes. URL route patterns use curly brackets to capture arguments, but be careful as query-string
+ * terms will overwrite any captures if they share the same name (i.e. /home/page/{user} pattern, when matched with
+ * /home/page/1 would capture user=1, but when matched with /home/page/1?user=3 will capture user=3)
+ *
+ * @param {[matchSpec]} urls - URL route patterns
+ * @param {boolean} noinit - if true, do no call onChange immediately using the current window.location
+ */
 function configure (urls, noinit) {
     // urls => [{pattern:, page:}]
     // where pattern is a path to match with using simplified curly syntax e.g. /home/page/{userId}
@@ -30,9 +44,18 @@ function configure (urls, noinit) {
     }
 
     // Hook into onpopstate
-    window.onpopstate = function (ev) {
+    window.addEventListener("popstate", function (ev) {
         apply();
-    }
+    });
+
+    // Hook into a link clicks
+    document.addEventListener('click', function (ev) {
+        if (ev.target.tagName !== 'A') return;
+
+        console.log(ev.target.href);
+        ev.preventDefault();
+        return false;
+    }, false);
 }
 
 /**
@@ -63,7 +86,7 @@ function apply () {
                 }
             }
 
-            if (match && module.exports.onChange) {
+            if (match) {
                 // Found match, add any search args from window.location.search
                 var searchTerms = window.location.search.length > 0 ? window.location.search.slice(1).split('&') : [];
                 searchTerms.forEach(function (t) {
@@ -71,7 +94,12 @@ function apply () {
                     args[tp[0]] = decodeURI(tp[1]);
                 });
 
-                module.exports.onChange(CONFIG[i].page, args);
+                // Update current state and trigger onChange
+                CURRENT_STATE = {"route": CONFIG[i].page, "args": args};
+                if (module.exports.onChange) {
+                    module.exports.onChange(CONFIG[i].page, args);
+                }
+
                 break;
             }
         }
@@ -119,6 +147,8 @@ function set (page, args, title) {
             // Update history
             history.pushState({}, '', url);
             if (title) { document.title = title; }
+
+            CURRENT_STATE = {"route": page, "args": args};
             if (module.exports.onChange) {
                 module.exports.onChange(page, args);
             }

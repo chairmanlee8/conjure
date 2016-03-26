@@ -11,6 +11,7 @@ module.exports = {
     requestInvalidate: requestInvalidate,       // Instead, use requestInvalidate to schedule an invalidate
     post: post,                                 // Post to message queue
     on: on,                                     // Register a message queue callback
+    nextTick: nextTick,                         // Register a callback to call once after the next render/invalidate
 
     // DEPRECATED
     alert: deadend,
@@ -23,9 +24,14 @@ G_ROOT = null;
 G_READY = false;
 G_QUEUE = [];
 G_CALLBACKS = {};
+G_NEXT_TICK = [];
 
 function deadend () {
     console.error("Not implemented.");
+}
+
+function nextTick (fn) {
+    G_NEXT_TICK.push(fn);
 }
 
 function invalidate () {
@@ -40,6 +46,11 @@ function invalidate () {
     t1 = performance.now();     patches = diff(G_TREE, newTree);
     t2 = performance.now();     G_ROOT = patch(G_ROOT, patches);
     t3 = performance.now();     G_TREE = newTree;
+
+    // Call all next tick waiters
+    var tickers = G_NEXT_TICK.slice(0);     // copy array
+    G_NEXT_TICK.length = 0;                 // clear original
+    tickers.map(function (fn) { fn() });
 
     // Display performance stats
     console.log(

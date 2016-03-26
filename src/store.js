@@ -1,7 +1,7 @@
 'use strict';
 
 var xhr = require('xhr'),
-    make_range = require('utils/range'),
+    make_range = require('./utils/range'),
     Global = require('./global');
 
 module.exports = {
@@ -78,6 +78,8 @@ function key (table, pk) {
 /**
  * Get an object from the data store. Guaranteed to return immediately (non-blocking). If an object is not found,
  * returns null, then depending on the state of the cache may or may not dispatch for the object from the server.
+ *
+ * WARNING: never use force=true inside a render() call, as this may dispatch API calls indefinitely!!
  * 
  * @param {string} k - Key (in the format provided by key(...)) of object to get.
  */
