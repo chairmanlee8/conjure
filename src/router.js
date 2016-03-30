@@ -103,9 +103,9 @@ function apply () {
                 });
 
                 // Update current state and trigger onChange
-                CURRENT_STATE = {"route": CONFIG[i].page, "args": args};
+                CURRENT_STATE = {"route": CONFIG[i].page, "args": args, "hash": window.location.hash};
                 if (CHANGE_FN) {
-                    CHANGE_FN(CONFIG[i].page, args);
+                    CHANGE_FN(CONFIG[i].page, args, window.location.hash);
                 }
 
                 matched = true;
