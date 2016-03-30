@@ -8,20 +8,16 @@
 
 export default {
     configure: configure,
-    getCurrent: getCurrent,
-    set: set,
-    go: set,                  // alias for set()
+    getCurrentPage: getCurrentPage,
+    go: go,
     back: back,
     forward: forward,
-    onChange: null
+    onChange: onChange
 }
 
 var CONFIG = [];
 var CURRENT_STATE = null;
-
-function getCurrent () {
-    return CURRENT_STATE;
-}
+var CHANGE_FN = null;
 
 /**
  * Configure URL routes. URL route patterns use curly brackets to capture arguments, but be careful as query-string
@@ -39,22 +35,33 @@ function configure (urls, noinit) {
     CONFIG = urls;
 
     if (!noinit) {
-        // Reverse the current window location
-        apply();
+        // Reverse the current window location, warn if URL would not be captured
+        if (!apply()) {
+            console.error("Warning: the current URL would not have been captured under the current Router configuration.");
+        }
     }
 
     // Hook into onpopstate
     window.addEventListener("popstate", function (ev) {
-        apply();
+        if (!apply()) {
+            window.location.reload();
+        }
     });
 
     // Hook into a link clicks
     document.addEventListener('click', function (ev) {
         if (ev.target.tagName !== 'A') return;
 
-        console.log(ev.target.href);
-        ev.preventDefault();
-        return false;
+        if (ev.target.protocol === window.location.protocol &&
+            ev.target.hostname === window.location.hostname &&
+            ev.target.port === window.location.port)
+        {
+            go(ev.target.href);
+
+            // Stay on this single page
+            ev.preventDefault();
+            return false;
+        }
     }, false);
 }
 
@@ -62,7 +69,8 @@ function configure (urls, noinit) {
  * Parse the current window location/path and update the Router state.
  */
 function apply () {
-    var url = window.location.pathname,
+    var matched = false,
+        url = window.location.pathname,
         urlParts = url.split('/').slice(1);     // slice(1) to get rid of initial slash /
 
     for (var i in CONFIG) {
@@ -96,65 +104,31 @@ function apply () {
 
                 // Update current state and trigger onChange
                 CURRENT_STATE = {"route": CONFIG[i].page, "args": args};
-                if (module.exports.onChange) {
-                    module.exports.onChange(CONFIG[i].page, args);
+                if (CHANGE_FN) {
+                    CHANGE_FN(CONFIG[i].page, args);
                 }
 
+                matched = true;
                 break;
             }
         }
     }
+
+    return matched;
 }
 
 /**
- * Navigate to the specified page with the supplied arguments. Will add a history entry and call onChange if configured.
- * Page names are defined in the configure() call.
+ * Navigate to the specified URL in a Router-friendly way (if you set window.location directly, the destination will not
+ * be parsed and checked for capture. If the destination is captured by one of the configured URL patterns, Router will
+ * intercept it and trigger the onChange event; otherwise it will navigate to the destination.
  *
- * @param {string} page - Page name as defined in configuration.
- * @param {Object} [args] - Arguments/parameter for the page.
- * @param {string} [title] - Set window title on page transition.
+ * @param {string} href - Destination link.
  */
-function set (page, args, title) {
-    for (var i in CONFIG) {
-        if (CONFIG[i].page === page) {
-            var url = CONFIG[i].pattern.slice(),
-                uncaptured = [];        // uncaptured arguments
-
-            // Replace curly args
-            for (var arg in args) {
-                var argRe = new RegExp("\\{" + arg + "\\}", 'g');
-
-                if (url.search(argRe) > -1) {
-                    url = url.replace(argRe, args[arg]);
-                } else {
-                    uncaptured.push(arg + "=" + encodeURI(args[arg]));
-                    args[arg] = String(args[arg]);
-                }
-            }
-
-            // Check for missing args
-            if (url.search(/\{.*\}/) > -1) {
-                // Soft-fail
-                console.error("Incomplete arguments in navigation request.");
-                return;
-            }
-
-            // Add any uncaptured arguments into the search field
-            if (uncaptured.length > 0) {
-                url += "?" + uncaptured.join('&');
-            }
-
-            // Update history
-            history.pushState({}, '', url);
-            if (title) { document.title = title; }
-
-            CURRENT_STATE = {"route": page, "args": args};
-            if (module.exports.onChange) {
-                module.exports.onChange(page, args);
-            }
-
-            break;
-        }
+function go (href) {
+    // Update history
+    history.pushState({}, '', href);
+    if (!apply()) {
+        window.location.reload();
     }
 }
 
@@ -172,4 +146,18 @@ function back () {
 function forward () {
     // Go forward if possible
     window.history.forward();
+}
+
+/**
+ * Get what Router thinks the current page is.
+ */
+function getCurrentPage () {
+    return CURRENT_STATE;
+}
+
+/**
+ * Hook into URL change event.
+ */
+function onChange (fn) {
+    CHANGE_FN = fn;
 }

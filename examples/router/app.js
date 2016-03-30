@@ -8,7 +8,6 @@ Router.configure([
     {pattern: "/world", page: "world"}
 ]);
 
-Router.onChange = function (page, args) {
-    console.log(page);
-    console.log(args);
-}
+Router.onChange(function (page, args) {
+    hereSpan.innerText = page;
+});
