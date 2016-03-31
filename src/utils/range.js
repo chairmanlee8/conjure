@@ -1,8 +1,14 @@
 'use strict';
 
-module.exports = make_range;
+export default {
+    fromArray: fromArray
+}
 
-function make_range (arr) {
+/**
+ * Convert an array of integers into a range-string.
+ * See standard PS-1 (https://gist.github.com/smiley325/95de4e653362577eb471) for syntax description.
+ */
+function fromArray (arr) {
     var sortedIndex = arr.slice(0).sort(function (a, b) { return a-b });
     var rangeStr = "";
 

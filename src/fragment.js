@@ -1,11 +1,9 @@
 'use strict';
 
-module.exports = Fragment;
-
 var FRAGMENT_COUNTER = 0,
     FRAGMENT_TABLE = {};
 
-class Fragment {
+export default class Fragment {
     constructor (parent) {
         this.$id = FRAGMENT_COUNTER++;
         this.$parentId = parent ? parent.$id : null;
