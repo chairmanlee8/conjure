@@ -1,7 +1,8 @@
 'use strict';
 
 export default {
-    fromArray: fromArray
+    fromArray: fromArray,
+    toArray: toArray
 }
 
 /**
@@ -27,4 +28,28 @@ function fromArray (arr) {
     pushRange(range);
 
     return rangeStr.slice(1);
+}
+
+/**
+ * Convert a range-string to an array of integers.
+ */
+function toArray (rs) {
+    var parts = rs.split(","),
+        result = [];
+
+    parts.forEach(function (part) {
+        var m = part.indexOf('R');
+        if (m < 0) {
+            result.push(parseInt(part));
+        } else {
+            var a = parseInt(part.slice(0, m)),
+                b = parseInt(part.slice(m+1));
+
+            for (var i = a; i <= b; i++) {
+                result.push(i);
+            }
+        }
+    });
+
+    return result;
 }

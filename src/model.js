@@ -1,5 +1,7 @@
 'use strict';
 
+import Cache from './cache';
+
 /**
  * There are two ways to use Models. One is to use them as stateless references, that is to say, whenever you need
  * a model just instantiate a new one.
@@ -12,24 +14,35 @@
  */
 
 export default class Model {
-    constructor (id) {
+    constructor () {
         this.$loaded = false;
-        this.$schema = null;
-        this.id = id;
+        Cache.get(this);
     }
 
-    static getRemoteUrl (...models) {
-
+    /**
+     * This method communicates with the remote server and performs the API calls necessary to get the data.
+     */
+    static loadFromRemote (...models) {
+        return false;
     }
 
     isLoaded () {
         return this.$loaded;
     }
 
-    onLoad (json) {
-
+    /**
+     * Method called after data is received from the remote server (or cache).
+     */
+    onLoad () {
+        this.$loaded = true;
     }
 
-    get id () { return this.id; }
-    set id (value) { this.id = value; }
+    /**
+     * Get the UUID for this model. For most applications this should equal/correspond to the schema + primary key of
+     * the database object. Returning `false` implies that this model instance is not uniquely identifiable and
+     * therefore uncacheable!
+     */
+    get uuid () {
+        return false;
+    }
 }
