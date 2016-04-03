@@ -48,6 +48,12 @@ export default class Model {
         Cache.set(this, data);
     }
 
+    invalidate () {
+        this.$loaded = false;
+        Cache.invalidate(this);
+        Cache.get(this);
+    }
+
     /**
      * Get the UUID for this model. For most applications this should equal/correspond to the schema + primary key of
      * the database object. Returning `false` implies that this model instance is not uniquely identifiable and

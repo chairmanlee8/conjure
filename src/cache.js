@@ -4,7 +4,8 @@ export default {
     hold: hold,
     release: release,
     get: get,
-    set: set
+    set: set,
+    invalidate: invalidate
 }
 
 var DATA = {},          // uuid => object data (whatever Model.loadFromRemote returns)
@@ -32,6 +33,10 @@ function get (...models) {
 
 function set(model, cacheArgs) {
     DATA[model.uuid] = cacheArgs;
+}
+
+function invalidate(model) {
+    delete DATA[model.uuid];
 }
 
 function hold () {
