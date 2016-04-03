@@ -11,7 +11,7 @@ var bundler = function (file) {
     }
 
     file.contents = browserify(opts)
-        .transform("babelify", {presets: ["es2015"]})
+        .transform("babelify", {presets: ["es2015"], plugins: ["syntax-jsx", "transform-react-jsx"]})
         .bundle();
 }
 
@@ -29,6 +29,15 @@ gulp.task('example:rest', function () {
         .pipe(gulp.dest('examples/rest'));
 });
 
+gulp.task('example:todomvc', function () {
+    return gulp.src('examples/todomvc/src/app.js', {read: false})
+        .pipe(tap(bundler))
+        .pipe(rename('app.bundle.js'))
+        .pipe(gulp.dest('examples/todomvc'));
+});
+
 gulp.task('default', [
-    'example:router'
+    'example:router',
+    'example:rest',
+    'example:todomvc'
 ]);

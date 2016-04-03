@@ -1,4 +1,4 @@
-import Router from 'router';
+import Router from 'conjure/router';
 
 var hereSpan = document.getElementById('Here');
 

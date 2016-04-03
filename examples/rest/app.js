@@ -1,7 +1,7 @@
-import Cache from 'cache';
-import Model from 'model';
-import Range from 'utils/range';
-import { mapFromArray } from 'utils';
+import Cache from 'conjure/cache';
+import Model from 'conjure/model';
+import Range from 'conjure/utils/range';
+import { mapFromArray } from 'conjure/utils';
 import xhr from 'xhr';
 
 class Dice extends Model {
