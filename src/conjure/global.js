@@ -22,10 +22,11 @@ var G_APP = null,
 // Should only be called once!
 function start (app) {
     G_APP = app;
-    G_TREE = G_APP.render();
+    G_TREE = G_APP.renderWithCache();
     G_ROOT = createElement(G_TREE);
     document.body.appendChild(G_ROOT);
     G_READY = true;
+    invalidate();
 }
 
 function swap (app) {
@@ -41,10 +42,10 @@ function invalidate () {
         return;
     }
 
-    t0 = performance.now();     newTree = G_APP.render();
-    t1 = performance.now();     patches = diff(G_TREE, newTree);
-    t2 = performance.now();     G_ROOT = patch(G_ROOT, patches);
-    t3 = performance.now();     G_TREE = newTree;
+    t0 = performance.now(); newTree = G_APP.renderWithCache();
+    t1 = performance.now(); patches = diff(G_TREE, newTree);
+    t2 = performance.now(); G_ROOT = patch(G_ROOT, patches);
+    t3 = performance.now(); G_TREE = newTree;
 
     // Call all next tick waiters
     var tickers = G_NEXT_TICK.slice(0);     // copy array

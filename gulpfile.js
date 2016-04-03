@@ -11,7 +11,7 @@ var bundler = function (file) {
     }
 
     file.contents = browserify(opts)
-        .transform("babelify", {presets: ["es2015"], plugins: ["syntax-jsx", "transform-react-jsx"]})
+        .transform("babelify", {presets: ["es2015"], plugins: ["syntax-jsx", "transform-h-jsx"]})
         .bundle();
 }
 

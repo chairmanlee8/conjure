@@ -3,15 +3,25 @@
 
 import h from 'virtual-dom/h';
 import Global from 'conjure/global';
+import Application from 'conjure/application';
 import Cache from 'conjure/cache';
 
-class TodoMVC {
+class TodoMVC extends Application {
     render () {
-        return <section className="todoapp">
-            <header className="header">
-                <h1>todos</h1>
-            </header>
-        </section>;
+        return <div>
+            <section className="todoapp">
+                <header className="header">
+                    <h1>todos</h1>
+                    <input className="new-todo" placeholder="What needs to be done?" autofocus />
+                </header>
+            </section>
+
+            <footer className="info">
+                <p>Double-click to edit a todo</p>
+                <p>Created for Conjure</p>
+                <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+            </footer>
+        </div>;
     }
 }
 
