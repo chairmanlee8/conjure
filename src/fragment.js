@@ -1,28 +1,6 @@
 'use strict';
 
-var FRAGMENT_COUNTER = 0,
-    FRAGMENT_TABLE = {};
-
 export default class Fragment {
-    constructor (parent) {
-        this.$id = FRAGMENT_COUNTER++;
-        this.$parentId = parent ? parent.$id : null;
-        this.$children = [];
-
-        FRAGMENT_TABLE[this.$id] = this;
-    }
-
-    destroy () {
-        delete FRAGMENT_TABLE[this.$id];
-
-        var pcs = FRAGMENT_TABLE[this.$parentId].$children,
-            i = pcs.indexOf(this.$id);
-
-        if (i > -1) {
-            pcs.slice(i, 1);
-        }
-    }
-
     render () {
         return null;
     }
