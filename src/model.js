@@ -14,13 +14,21 @@ import Cache from './cache';
  */
 
 export default class Model {
-    constructor () {
+    /**
+     * For subclasses, call super() with a function argument, which will provide the this argument.
+     * This is due primarily to the no-this-before-super rule for derived classes in ES6.
+     */
+    constructor (fn) {
+        if (fn) {
+            fn(this);
+        }
         this.$loaded = false;
         Cache.get(this);
     }
 
     /**
      * This method communicates with the remote server and performs the API calls necessary to get the data.
+     * It should call onLoad on each model. The mapFromArray function from utils will be very useful.
      */
     static loadFromRemote (...models) {
         return false;
@@ -32,9 +40,12 @@ export default class Model {
 
     /**
      * Method called after data is received from the remote server (or cache).
+     * Subclasses should, like the constructor, call super() last.
+     * TODO: should be able to call with any number of arguments -- go variadic
      */
-    onLoad () {
+    onLoad (data) {
         this.$loaded = true;
+        Cache.set(this, data);
     }
 
     /**

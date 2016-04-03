@@ -44,8 +44,13 @@ var server = http.createServer(function (req, resp) {
             var fin = fs.createReadStream("app.html");
             fin.pipe(resp);
             break;
+        case "/app.bundle.js":
+            resp.writeHead(200, {"Content-Type": "text/html"});
+            var fin = fs.createReadStream("app.bundle.js");
+            fin.pipe(resp);
+            break;
         case "/die":
-        case "/dices":
+        case "/dice":
             var ids = toArray(parts[1].slice(2));
             var die = ids.map(generateDice);
             resp.writeHead(200, {"Content-Type": "application/json"});
