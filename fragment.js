@@ -1,1 +1,1 @@
-export * from './src/conjure/fragment';
+export { default } from './src/conjure/fragment';

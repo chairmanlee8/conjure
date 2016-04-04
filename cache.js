@@ -1,1 +1,1 @@
-export * from './src/conjure/cache'
+export { default } from './src/conjure/cache'

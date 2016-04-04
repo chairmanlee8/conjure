@@ -1,1 +1,1 @@
-export * from './src/conjure/router';
+export { default } from './src/conjure/router';

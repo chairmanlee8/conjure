@@ -1,1 +1,1 @@
-export * from './src/conjure/model';
+export { default } from './src/conjure/model';

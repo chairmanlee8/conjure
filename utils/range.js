@@ -1,1 +1,1 @@
-export * from '../src/conjure/utils/range';
+export { default } from '../src/conjure/utils/range';
