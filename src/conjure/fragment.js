@@ -11,7 +11,7 @@ export default class Fragment {
      *
      * For non class methods (or methods that call into a different `this`, use framework/utils/handle).
      */
-    handle (fn, final=false, args) {
+    handle (fn, args, final=false) {
         var self = this;
 
         return function (ev) {
