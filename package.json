@@ -1,6 +1,6 @@
 {
   "name": "conjurejs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Minimal, modern frontend framework for web applications.",
   "main": "index.js",
   "scripts": {
@@ -33,6 +33,8 @@
     "virtual-dom": "^2.1.1"
   },
   "browserify": {
-    "transform": ["babelify"]
+    "transform": [
+      "babelify"
+    ]
   }
 }
