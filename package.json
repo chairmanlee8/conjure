@@ -1,5 +1,5 @@
 {
-  "name": "conjure",
+  "name": "conjurejs",
   "version": "0.0.2",
   "description": "Minimal, modern frontend framework for web applications.",
   "main": "index.js",
