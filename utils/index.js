@@ -1,1 +1,1 @@
-export * from './src/conjure/utils';
+export * from '../src/conjure/utils';
