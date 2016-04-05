@@ -1,5 +1,7 @@
 'use strict';
 
+import Global from './global';
+
 export default {
     hold: hold,
     release: release,
@@ -10,29 +12,34 @@ export default {
 
 var DATA = {},          // uuid => object data (whatever Model.loadFromRemote returns)
     HOLDING = false,
-    HOLD_QUEUE = [];
+    HOLD_QUEUE = [],
+    INFLIGHT = new Set();
 
 function get (...models) {
     // First return anything that's cached
-    var missed = [];
+    var missed = new Set();
     models.forEach(function (model) {
         if (model.uuid && DATA.hasOwnProperty(model.uuid)) {
             model.onLoad(DATA[model.uuid]);
         } else {
-            missed.push(model);
+            missed.add(model);
         }
     });
 
+    // Filter missed by excluding uuid's already inflight
+    let needs = new Set([...missed].filter(x => !INFLIGHT.has(x.uuid)));
+
     if (HOLDING) {
         // Holding, just push back everything to the hold queue.
-        HOLD_QUEUE = HOLD_QUEUE.concat(missed);
+        HOLD_QUEUE = HOLD_QUEUE.concat([...needs]);
     } else {
-        processQueue(missed);
+        processQueue([...needs]);
     }
 }
 
 function set(model, cacheArgs) {
     DATA[model.uuid] = cacheArgs;
+    INFLIGHT.delete(model.uuid);
 }
 
 function invalidate(model) {
@@ -57,6 +64,7 @@ function processQueue(models) {
     // but we can compare constructors to check for class equivalence instead.
     var bucketHandles = [];
     var buckets = {};
+
     models.forEach(function (model) {
         var thisHandle = model.constructor, i;
         for (i = 0; i < bucketHandles.length; i++) {
@@ -69,10 +77,12 @@ function processQueue(models) {
         } else {
             buckets[i].push(model);
         }
+
+        // Add to INFLIGHT set
+        INFLIGHT.add(model.uuid);
     });
 
-    // Load from remote
-    bucketHandles.forEach(function (cls, i) {
-        cls.loadFromRemote(...buckets[i]);
-    });
+    // Load from remote then invalidate
+    Promise.all(bucketHandles.map((cls, i) => cls.loadFromRemote(...buckets[i])))
+           .then(() => Global.requestInvalidate())
 }
