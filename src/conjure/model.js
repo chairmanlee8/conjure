@@ -19,11 +19,14 @@ export default class Model {
      * This is due primarily to the no-this-before-super rule for derived classes in ES6.
      */
     constructor (fn) {
-        if (fn) {
-            fn(this);
-        }
+        this.$local = false;
+        if (fn) { fn(this) }
         this.$loaded = false;
         Cache.get(this);
+    }
+
+    setLocal (v) {
+        this.$local = v;
     }
 
     /**

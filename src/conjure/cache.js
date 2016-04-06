@@ -28,10 +28,12 @@ function get (...models) {
     // First return anything that's cached
     var missed = new Set();
     models.forEach(function (model) {
-        if (model.uuid && DATA.hasOwnProperty(model.uuid)) {
-            model.onLoad(DATA[model.uuid]);
-        } else {
-            missed.add(model);
+        if (!model.$local) {
+            if (model.uuid && DATA.hasOwnProperty(model.uuid)) {
+                model.onLoad(DATA[model.uuid]);
+            } else {
+                missed.add(model);
+            }
         }
     });
 
