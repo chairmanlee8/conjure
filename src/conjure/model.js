@@ -38,6 +38,17 @@ export default class Model {
         return this.$loaded;
     }
 
+    afterLoad () {
+        return new Promise((resolve, reject) => {
+            if (this.$loaded) {
+                resolve(this);
+            } else {
+                Cache.waitFor(this, () => resolve(this));
+            }
+            // TODO: what is timeout?
+        });
+    }
+
     /**
      * Method called after data is received from the remote server (or cache).
      * Subclasses should, like the constructor, call super() last.

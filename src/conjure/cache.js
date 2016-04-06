@@ -7,13 +7,22 @@ export default {
     release: release,
     get: get,
     set: set,
-    invalidate: invalidate
+    invalidate: invalidate,
+    waitFor: waitFor
 }
 
 var DATA = {},          // uuid => object data (whatever Model.loadFromRemote returns)
     HOLDING = false,
     HOLD_QUEUE = [],
-    INFLIGHT = new Set();
+    INFLIGHT = new Set(),
+    WAITERS = {};       // uuid => fn
+
+function waitFor (model, fn) {
+    if (!WAITERS.hasOwnProperty(model.uuid)) {
+        WAITERS[model.uuid] = [];
+    }
+    WAITERS[model.uuid].push(fn);
+}
 
 function get (...models) {
     // First return anything that's cached
@@ -83,6 +92,14 @@ function processQueue(models) {
     });
 
     // Load from remote then invalidate
-    Promise.all(bucketHandles.map((cls, i) => cls.loadFromRemote(...buckets[i])))
-           .then(() => Global.requestInvalidate())
+    Promise.all(bucketHandles.map((cls, i) => cls.loadFromRemote(...buckets[i]))).then(() => {
+        // For all models that are loaded, call waiters
+        models.forEach(model => {
+            if (model.$loaded && WAITERS.hasOwnProperty(model.uuid)) {
+                let waiters = WAITERS[model.uuid].slice(0);
+                WAITERS[model.uuid].length = 0;
+                waiters.forEach(fn => fn());
+            }
+        });
+    });
 }
