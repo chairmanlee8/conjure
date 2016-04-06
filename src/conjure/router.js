@@ -55,17 +55,17 @@ function configure (urls, noinit) {
         var target = ev.target;
 
         while (target) {
-            if (target.tagName !== 'A') return;
+            if (target.tagName === 'A') {
+                if (target.protocol === window.location.protocol &&
+                    target.hostname === window.location.hostname &&
+                    target.port === window.location.port)
+                {
+                    go(target.href);
 
-            if (target.protocol === window.location.protocol &&
-                target.hostname === window.location.hostname &&
-                target.port === window.location.port)
-            {
-                go(target.href);
-
-                // Stay on this single page
-                ev.preventDefault();
-                return false;
+                    // Stay on this single page
+                    ev.preventDefault();
+                    return false;
+                }
             }
 
             target = target.parentNode;
