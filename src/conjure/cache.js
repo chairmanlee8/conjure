@@ -103,5 +103,7 @@ function processQueue(models) {
                 waiters.forEach(fn => fn());
             }
         });
+
+        Global.requestInvalidate();
     });
 }
