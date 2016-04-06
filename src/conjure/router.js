@@ -50,18 +50,28 @@ function configure (urls, noinit) {
 
     // Hook into a link clicks
     document.addEventListener('click', function (ev) {
-        if (ev.target.tagName !== 'A') return;
+        // Assuming event bubbles from innermost to outermost
+        // Check to see if A tag is contained
+        var target = ev.target;
 
-        if (ev.target.protocol === window.location.protocol &&
-            ev.target.hostname === window.location.hostname &&
-            ev.target.port === window.location.port)
-        {
-            go(ev.target.href);
+        while (target) {
+            if (target.tagName !== 'A') return;
 
-            // Stay on this single page
-            ev.preventDefault();
-            return false;
+            if (target.protocol === window.location.protocol &&
+                target.hostname === window.location.hostname &&
+                target.port === window.location.port)
+            {
+                go(target.href);
+
+                // Stay on this single page
+                ev.preventDefault();
+                return false;
+            }
+
+            target = target.parentNode;
         }
+
+        return true;
     }, false);
 }
 
