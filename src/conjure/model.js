@@ -18,8 +18,8 @@ export default class Model {
      * For subclasses, call super() with a function argument, which will provide the this argument.
      * This is due primarily to the no-this-before-super rule for derived classes in ES6.
      */
-    constructor (fn, local=false) {
-        this.$local = local;
+    constructor (fn) {
+        this.$local = false;
         if (fn) { fn(this) }
         this.$loaded = false;
         Cache.get(this);
