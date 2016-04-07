@@ -1,5 +1,3 @@
-'use strict';
-
 import Global from './global';
 
 export default {
@@ -11,11 +9,11 @@ export default {
     waitFor: waitFor
 }
 
-var DATA = {},          // uuid => object data (whatever Model.loadFromRemote returns)
+var DATA = {},              // uuid => {stale: false/true, value: object data (whatever Model.loadFromRemote returns)}
     HOLDING = false,
     HOLD_QUEUE = [],
     INFLIGHT = new Set(),
-    WAITERS = {};       // uuid => fn
+    WAITERS = {};           // uuid => fn
 
 function waitFor (model, fn) {
     if (!WAITERS.hasOwnProperty(model.uuid)) {
@@ -32,14 +30,22 @@ function callWaiters (model) {
     }
 }
 
+/**
+ * TODO: Default behavior is to look at DATA::valid and return stale data anyways (while dispatching to remote).
+ * Perhaps we can add a strict mode to never return stale data, but what would be the point?
+ */
 function get (...models) {
     // First return anything that's cached
     var missed = new Set();
     models.forEach(function (model) {
         if (!model.$local) {
             if (model.uuid && DATA.hasOwnProperty(model.uuid)) {
-                model.onLoad(DATA[model.uuid]);
+                model.onLoad(DATA[model.uuid].value);
                 callWaiters(model);
+
+                if (DATA[model.uuid].stale) {
+                    missed.add(model);
+                }
             } else {
                 missed.add(model);
             }
@@ -57,13 +63,15 @@ function get (...models) {
     }
 }
 
-function set(model, cacheArgs) {
-    DATA[model.uuid] = cacheArgs;
+function set (model, cacheArgs) {
+    DATA[model.uuid] = {stale: false, value: cacheArgs};
     INFLIGHT.delete(model.uuid);
 }
 
-function invalidate(model) {
-    delete DATA[model.uuid];
+function invalidate (model) {
+    if (DATA.hasOwnProperty(model.uuid)) {
+        DATA[model.uuid].stale = true;
+    }
 }
 
 function hold () {
