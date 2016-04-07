@@ -12,7 +12,7 @@ export default {
     _inspect: _inspect
 }
 
-var DATA = {},              // uuid => {stale: false/true, value: object data (whatever Model.loadFromRemote returns)}
+var DATA = {},              // uuid => {stale: false/true, raw: true/false, value: object data (whatever Model.loadFromRemote returns)}
     HOLDING = false,
     HOLD_QUEUE = [],
     INFLIGHT = new Set(),
@@ -47,7 +47,14 @@ function get (...models) {
     models.forEach(function (model) {
         if (!model.$local) {
             if (model.uuid && DATA.hasOwnProperty(model.uuid)) {
-                model.fromCache(DATA[model.uuid].value);
+                // If cache data is raw (some kind of preloading data), pretend this load is from remote
+                // Otherwise normal cache hit
+                if (DATA[model.uuid].raw) {
+                    model.fromRemote(DATA[model.uuid].value);
+                } else {
+                    model.fromCache(DATA[model.uuid].value);
+                }
+
                 callWaiters(model);
 
                 if (DATA[model.uuid].stale) {
@@ -71,7 +78,7 @@ function get (...models) {
 }
 
 function set (model, cacheArgs) {
-    DATA[model.uuid] = {stale: false, value: cacheArgs};
+    DATA[model.uuid] = {stale: false, raw: false, value: cacheArgs};
     INFLIGHT.delete(model.uuid);
 }
 
@@ -79,6 +86,10 @@ function invalidate (model) {
     if (DATA.hasOwnProperty(model.uuid)) {
         DATA[model.uuid].stale = true;
     }
+}
+
+function preload (model, data) {
+    DATA[model.uuid] = {stale: false, raw: true, value: data};
 }
 
 function hold () {
