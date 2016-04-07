@@ -5,6 +5,7 @@ export default {
     release: release,
     get: get,
     set: set,
+    preload: preload,
     invalidate: invalidate,
     waitFor: waitFor,
 
