@@ -6,7 +6,10 @@ export default {
     get: get,
     set: set,
     invalidate: invalidate,
-    waitFor: waitFor
+    waitFor: waitFor,
+
+    // Debugging hooks
+    _inspect: _inspect
 }
 
 var DATA = {},              // uuid => {stale: false/true, value: object data (whatever Model.loadFromRemote returns)}
@@ -14,6 +17,10 @@ var DATA = {},              // uuid => {stale: false/true, value: object data (w
     HOLD_QUEUE = [],
     INFLIGHT = new Set(),
     WAITERS = {};           // uuid => fn
+
+function _inspect () {
+    return DATA;
+}
 
 function waitFor (model, fn) {
     if (!WAITERS.hasOwnProperty(model.uuid)) {
