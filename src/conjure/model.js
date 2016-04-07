@@ -44,11 +44,11 @@ export default class Model {
 
     afterLoad (perpetual=false) {
         return new Promise((resolve, reject) => {
-            if (this.$loaded) {
+            if (this.$loaded || this.$local) {
                 resolve(this);
             }
 
-            if (!this.$loaded || perpetual) {
+            if (!(this.$loaded || this.$local) || perpetual) {
                 Cache.waitFor(this, () => {
                     resolve(this);
                     return perpetual;
