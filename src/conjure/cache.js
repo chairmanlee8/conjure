@@ -74,6 +74,9 @@ function get (...models) {
             } else {
                 missed.add(model);
             }
+        } else {
+            // Just call waiters for local (as if immediate cache hit)
+            callWaiters(model);
         }
     });
 
