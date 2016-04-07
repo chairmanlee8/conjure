@@ -17,10 +17,16 @@ var DATA = {},              // uuid => {stale: false/true, raw: true/false, valu
     HOLDING = false,
     HOLD_QUEUE = [],
     INFLIGHT = new Set(),
-    WAITERS = {};           // uuid => fn
+    WAITERS = {};           // uuid => fn, return true for permanent waiter
 
 function _inspect () {
-    return DATA;
+    return {
+        DATA: DATA,
+        HOLDING: HOLDING,
+        HOLD_QUEUE: HOLD_QUEUE,
+        INFLIGHT: INFLIGHT,
+        WAITERS: WAITERS
+    };
 }
 
 function waitFor (model, fn) {
@@ -34,7 +40,11 @@ function callWaiters (model) {
     if (WAITERS.hasOwnProperty(model.uuid)) {
         let waiters = WAITERS[model.uuid].slice();
         WAITERS[model.uuid].length = 0;
-        waiters.forEach(fn => fn());
+        waiters.forEach(fn => {
+            if (fn()) {
+                WAITERS[model.uuid].push(fn);
+            }
+        });
     }
 }
 

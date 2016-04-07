@@ -42,12 +42,17 @@ export default class Model {
         return this.$loaded;
     }
 
-    afterLoad () {
+    afterLoad (perpetual=false) {
         return new Promise((resolve, reject) => {
             if (this.$loaded) {
                 resolve(this);
-            } else {
-                Cache.waitFor(this, () => resolve(this));
+            }
+
+            if (!this.$loaded || perpetual) {
+                Cache.waitFor(this, () => {
+                    resolve(this);
+                    return perpetual;
+                });
             }
             // TODO: what is timeout?
         });
