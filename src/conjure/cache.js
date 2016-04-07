@@ -24,6 +24,14 @@ function waitFor (model, fn) {
     WAITERS[model.uuid].push(fn);
 }
 
+function callWaiters (model) {
+    if (WAITERS.hasOwnProperty(model.uuid)) {
+        let waiters = WAITERS[model.uuid].slice();
+        WAITERS[model.uuid].length = 0;
+        waiters.forEach(fn => fn());
+    }
+}
+
 function get (...models) {
     // First return anything that's cached
     var missed = new Set();
@@ -31,6 +39,7 @@ function get (...models) {
         if (!model.$local) {
             if (model.uuid && DATA.hasOwnProperty(model.uuid)) {
                 model.onLoad(DATA[model.uuid]);
+                callWaiters(model);
             } else {
                 missed.add(model);
             }
@@ -97,10 +106,8 @@ function processQueue(models) {
     Promise.all(bucketHandles.map((cls, i) => cls.loadFromRemote(...buckets[i]))).then(() => {
         // For all models that are loaded, call waiters
         models.forEach(model => {
-            if (model.$loaded && WAITERS.hasOwnProperty(model.uuid)) {
-                let waiters = WAITERS[model.uuid].slice(0);
-                WAITERS[model.uuid].length = 0;
-                waiters.forEach(fn => fn());
+            if (model.$loaded) {
+                callWaiters(model);
             }
         });
 
