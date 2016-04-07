@@ -10,3 +10,12 @@ export function mapFromArray (arr, keyFn) {
     });
     return m;
 }
+
+/**
+ * Copy all keys from `json` to `dest`.
+ */
+export function copyAll (dest, json) {
+    for (var k in json) {
+        dest[k] = json[k];
+    }
+}

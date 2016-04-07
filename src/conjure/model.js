@@ -1,6 +1,7 @@
 'use strict';
 
 import Cache from './cache';
+import { copyAll } from './utils';
 
 /**
  * There are two ways to use Models. One is to use them as stateless references, that is to say, whenever you need
@@ -53,13 +54,16 @@ export default class Model {
     }
 
     /**
-     * Method called after data is received from the remote server (or cache).
+     * Method called after data is received from the remote server.
      * Subclasses should, like the constructor, call super() last.
-     * TODO: should be able to call with any number of arguments -- go variadic
      */
-    onLoad (data) {
+    fromRemote (data) {
         this.$loaded = true;
         Cache.set(this, data);
+    }
+
+    fromCache (data) {
+        copyAll(this, data);
     }
 
     invalidate () {

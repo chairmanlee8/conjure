@@ -47,7 +47,7 @@ function get (...models) {
     models.forEach(function (model) {
         if (!model.$local) {
             if (model.uuid && DATA.hasOwnProperty(model.uuid)) {
-                model.onLoad(DATA[model.uuid].value);
+                model.fromCache(DATA[model.uuid].value);
                 callWaiters(model);
 
                 if (DATA[model.uuid].stale) {
