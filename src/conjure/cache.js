@@ -76,6 +76,7 @@ function get (...models) {
             }
         } else {
             // Just call waiters for local (as if immediate cache hit)
+            // TODO: what does this even mean? $local models are not really uniquely identifiable........
             callWaiters(model);
         }
     });
