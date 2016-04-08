@@ -10,7 +10,7 @@ export default {
     waitFor: waitFor,
 
     // Debugging hooks
-    _inspect: _inspect
+    debugInspect: debugInspect
 }
 
 var DATA = {},              // uuid => {stale: false/true, raw: true/false, value: object data (whatever Model.loadFromRemote returns)}
@@ -19,7 +19,7 @@ var DATA = {},              // uuid => {stale: false/true, raw: true/false, valu
     INFLIGHT = new Set(),
     WAITERS = {};           // uuid => fn, return true for permanent waiter
 
-function _inspect () {
+function debugInspect () {
     return {
         DATA: DATA,
         HOLDING: HOLDING,
