@@ -6,8 +6,7 @@ export default {
     start: start,
     swap: swap,
     requestInvalidate: requestInvalidate,       // Instead, use requestInvalidate to schedule an invalidate
-    post: post,                                 // Post to message queue
-    on: on,                                     // Register a message queue callback
+    getApplication: getApplication,             // Get registered application
     nextTick: nextTick,                         // Register a callback to call once after the next render/invalidate
     debugPerformance: debugPerformance          // Toggle performance logging
 }
@@ -38,6 +37,10 @@ function swap (app) {
 
 function debugPerformance (flag) {
     G_LOG_PERF = flag;
+}
+
+function getApplication () {
+    return G_APP;
 }
 
 function invalidate () {
@@ -74,34 +77,4 @@ function nextTick (fn) {
 
 function requestInvalidate () {
     window.requestAnimationFrame(invalidate);
-}
-
-//
-// Simple message queue.
-
-function post (msg, ...data) {
-    G_QUEUE.push([msg, data]);
-
-    setTimeout(function () {
-        consumeQueue();
-    }, 0);
-}
-
-function on (msg, cb) {
-    if (G_CALLBACKS.hasOwnProperty(msg)) {
-        G_CALLBACKS[msg].push(cb);
-    } else {
-        G_CALLBACKS[msg] = [cb];
-    }
-}
-
-function consumeQueue () {
-    G_QUEUE.forEach(function (ab) {
-        if (G_CALLBACKS.hasOwnProperty(ab[0])) {
-            var qs = G_CALLBACKS[ab[0]].slice(0);
-            qs.forEach(q => q(...ab[1]));
-        }
-    });
-
-    G_QUEUE.length = 0;
 }
