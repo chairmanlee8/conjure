@@ -58,7 +58,8 @@ function configure (urls, noinit) {
             if (target.tagName === 'A') {
                 if (target.protocol === window.location.protocol &&
                     target.hostname === window.location.hostname &&
-                    target.port === window.location.port)
+                    target.port === window.location.port &&
+                    target.target !== "_blank")
                 {
                     go(target.href);
 
