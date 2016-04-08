@@ -42,18 +42,12 @@ export default class Model {
         return this.$loaded;
     }
 
-    // TODO: perpetual is actually useless since it includes every cache hit...better to do remotes only?
-    afterLoad (perpetual=false) {
+    afterLoad () {
         return new Promise((resolve, reject) => {
             if (this.$loaded || this.$local) {
                 resolve(this);
-            }
-
-            if (!(this.$loaded || this.$local) || perpetual) {
-                Cache.waitFor(this, () => {
-                    resolve(this);
-                    return perpetual;
-                });
+            } else {
+                Cache.waitFor(this, () => { resolve(this); });
                 Cache.get(this);
             }
             // TODO: what is timeout?
