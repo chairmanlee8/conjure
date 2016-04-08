@@ -8,7 +8,8 @@ export default {
     requestInvalidate: requestInvalidate,       // Instead, use requestInvalidate to schedule an invalidate
     post: post,                                 // Post to message queue
     on: on,                                     // Register a message queue callback
-    nextTick: nextTick                          // Register a callback to call once after the next render/invalidate
+    nextTick: nextTick,                         // Register a callback to call once after the next render/invalidate
+    debugPerformance: debugPerformance          // Toggle performance logging
 }
 
 var G_APP = null,
@@ -17,7 +18,8 @@ var G_APP = null,
     G_READY = false,
     G_QUEUE = [],
     G_CALLBACKS = {},
-    G_NEXT_TICK = [];
+    G_NEXT_TICK = [],
+    G_LOG_PERF = false;
 
 // Should only be called once!
 function start (app) {
@@ -32,6 +34,10 @@ function start (app) {
 function swap (app) {
     G_APP = app;
     requestInvalidate();
+}
+
+function debugPerformance (flag) {
+    G_LOG_PERF = flag;
 }
 
 function invalidate () {
@@ -53,11 +59,13 @@ function invalidate () {
     tickers.map(function (fn) { fn() });
 
     // Display performance stats
-    console.log(
-        "Render: " + (t1-t0).toFixed(2) + "ms. " +
-        "Diff: " + (t2-t1).toFixed(2) + "ms. " +
-        "Patch: " + (t3-t2).toFixed(2) + "ms."
-    );
+    if (G_LOG_PERF) {
+        console.log(
+            "Render: " + (t1-t0).toFixed(2) + "ms. " +
+            "Diff: " + (t2-t1).toFixed(2) + "ms. " +
+            "Patch: " + (t3-t2).toFixed(2) + "ms."
+        );
+    }
 }
 
 function nextTick (fn) {
