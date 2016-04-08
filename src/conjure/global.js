@@ -15,8 +15,6 @@ var G_APP = null,
     G_TREE = null,
     G_ROOT = null,
     G_READY = false,
-    G_QUEUE = [],
-    G_CALLBACKS = {},
     G_NEXT_TICK = [],
     G_LOG_PERF = false;
 
