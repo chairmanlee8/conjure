@@ -84,6 +84,11 @@ function get (...models) {
     // Filter missed by excluding uuid's already inflight
     let needs = new Set([...missed].filter(x => !INFLIGHT.has(x.uuid)));
 
+    if (needs.size <= 0) {
+        // Nothing to do
+        return;
+    }
+
     if (HOLDING) {
         // Holding, just push back everything to the hold queue.
         HOLD_QUEUE = HOLD_QUEUE.concat([...needs]);
