@@ -41,7 +41,7 @@ function callWaiters (model) {
         let waiters = WAITERS[model.uuid].slice();
         WAITERS[model.uuid].length = 0;
         waiters.forEach(fn => {
-            if (fn()) {
+            if (fn(model)) {
                 WAITERS[model.uuid].push(fn);
             }
         });

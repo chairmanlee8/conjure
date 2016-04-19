@@ -47,7 +47,7 @@ export default class Model {
             if (this.$loaded || this.$local) {
                 resolve(this);
             } else {
-                Cache.waitFor(this, () => { resolve(this); });
+                Cache.waitFor(this, (model) => { resolve(model); });
                 Cache.get(this);
             }
             // TODO: what is timeout?
