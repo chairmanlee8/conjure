@@ -12,6 +12,14 @@ export default class Calendar {
     setDate  (d) { this.set(this.year, this.month, d) }
     setWeek  (w) { this.week = w }
 
+    get value () {
+        return new Date(this.year, this.month-1, this.date);
+    }
+
+    set value (d) {
+        this.set(d.getFullYear(), d.getMonth()+1, d.getDate());
+    }
+
     set (y, m, d) {
         this.year = y;
         this.month = m;
