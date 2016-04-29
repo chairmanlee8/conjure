@@ -1,6 +1,6 @@
 {
   "name": "conjurejs",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "description": "Minimal, modern frontend framework for web applications.",
   "main": "index.js",
   "scripts": {
