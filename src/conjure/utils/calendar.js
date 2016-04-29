@@ -28,7 +28,7 @@ export default class Calendar {
         this.date = d;
 
         var match = function (y, m, d) {
-            return (this.year == y) && (this.month == m) && (this.date == d);
+            return (self.year == y) && (self.month == m) && (self.date == d);
         }
 
         // Set calendar month to the given month and year. (Month and year in natural units)
