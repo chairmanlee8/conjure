@@ -4,7 +4,7 @@ export default class Calendar {
         this.week = 0;
 
         let today = new Date();
-        set(today.getFullYear(), today.getMonth()+1, today.getDate());
+        this.set(today.getFullYear(), today.getMonth()+1, today.getDate());
     }
 
     setYear  (y) { this.set(y, this.month, this.date) }
