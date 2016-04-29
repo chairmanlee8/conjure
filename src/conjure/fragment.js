@@ -1,6 +1,15 @@
 'use strict';
 
 export default class Fragment {
+    constructor () {
+        this.$uuid = `fragment-${Fragment.ID_COUNTER}`;
+        Fragment.ID_COUNTER++;
+    }
+
+    get uuid () {
+        return this.$uuid;
+    }
+
     render () {
         return null;
     }
@@ -25,3 +34,5 @@ export default class Fragment {
         }
     }
 }
+
+Fragment.ID_COUNTER = 1;
