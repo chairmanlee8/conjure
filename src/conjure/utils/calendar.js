@@ -1,6 +1,6 @@
 export default class Calendar {
     constructor () {
-        this.grid = [];
+        this.grid = [];     // format, [week] where week is array of [y, m, d, current_month (bool)]
         this.week = 0;
 
         let today = new Date();
@@ -42,14 +42,14 @@ export default class Calendar {
 
         // Previous month
         for (var i = 0; i < monthStart.getDay(); i++) {
-            this.grid[wk].push([base[0], base[1], base[2] + i]);
+            this.grid[wk].push([base[0], base[1], base[2] + i, false]);
             wkDay++;
         }
 
         // Current month
         base = [monthStart.getFullYear(), monthStart.getMonth()+1, monthStart.getDate()];
         for (var i = 0; i < monthEnd.getDate(); i++) {
-            this.grid[wk].push([base[0], base[1], base[2] + i]);
+            this.grid[wk].push([base[0], base[1], base[2] + i, true]);
 
             // Is this the week?
             if (base[2] + i == d) {
@@ -74,7 +74,7 @@ export default class Calendar {
         base = [calEnd.getFullYear(), calEnd.getMonth()+1, 1];
         var ctr = 0;
         for (var i = (monthEnd.getDay() + 1) % 7; i <= calEnd.getDay(); i++) {
-            this.grid[wk].push([base[0], base[1], base[2] + (ctr++)]);
+            this.grid[wk].push([base[0], base[1], base[2] + (ctr++), false]);
         }
 
         // Check empty last row
