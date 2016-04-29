@@ -1,6 +1,6 @@
 export default class Calendar {
     constructor () {
-        this.grid = [];     // format, [week] where week is array of [y, m, d, current_month (bool)]
+        this.grid = [];     // format, [week] where week is array of [y, m, d, current_month (bool), current_value]
         this.week = 0;
 
         let today = new Date();
@@ -21,9 +21,15 @@ export default class Calendar {
     }
 
     set (y, m, d) {
+        var self = this;
+
         this.year = y;
         this.month = m;
         this.date = d;
+
+        var match = function (y, m, d) {
+            return (this.year == y) && (this.month == m) && (this.date == d);
+        }
 
         // Set calendar month to the given month and year. (Month and year in natural units)
         var monthStart = new Date(y, m-1, 1);
@@ -42,14 +48,14 @@ export default class Calendar {
 
         // Previous month
         for (var i = 0; i < monthStart.getDay(); i++) {
-            this.grid[wk].push([base[0], base[1], base[2] + i, false]);
+            this.grid[wk].push([base[0], base[1], base[2] + i, false, match(base[0], base[1], base[2]+i)]);
             wkDay++;
         }
 
         // Current month
         base = [monthStart.getFullYear(), monthStart.getMonth()+1, monthStart.getDate()];
         for (var i = 0; i < monthEnd.getDate(); i++) {
-            this.grid[wk].push([base[0], base[1], base[2] + i, true]);
+            this.grid[wk].push([base[0], base[1], base[2] + i, true, match(base[0], base[1], base[2]+i)]);
 
             // Is this the week?
             if (base[2] + i == d) {
@@ -74,7 +80,7 @@ export default class Calendar {
         base = [calEnd.getFullYear(), calEnd.getMonth()+1, 1];
         var ctr = 0;
         for (var i = (monthEnd.getDay() + 1) % 7; i <= calEnd.getDay(); i++) {
-            this.grid[wk].push([base[0], base[1], base[2] + (ctr++), false]);
+            this.grid[wk].push([base[0], base[1], base[2] + (ctr++), false, match(base[0], base[1], base[2]+i)]);
         }
 
         // Check empty last row
