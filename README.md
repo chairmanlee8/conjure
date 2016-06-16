@@ -13,3 +13,9 @@ Build Examples
 
     npm install
     gulp
+
+Developers, Developers, Developers, Developers
+----------------------------------------------
+
+    # Commit any changes
+    npm version [patch|minor|major]
