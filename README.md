@@ -19,3 +19,5 @@ Developers, Developers, Developers, Developers
 
     # Commit any changes
     npm version [patch|minor|major]
+    git push --follow-tags
+    npm publish
