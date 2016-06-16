@@ -103,8 +103,15 @@ function set (model, cacheArgs) {
 }
 
 function invalidate (model) {
-    if (DATA.hasOwnProperty(model.uuid)) {
-        DATA[model.uuid].stale = true;
+    if (model.hasOwnProperty('uuid')) {
+        if (DATA.hasOwnProperty(model.uuid)) {
+            DATA[model.uuid].stale = true;
+        }
+    } else {
+        // Try as raw string
+        if (DATA.hasOwnProperty(model)) {
+            DATA[model].stale = true;
+        }
     }
 }
 
