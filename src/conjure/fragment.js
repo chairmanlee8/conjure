@@ -33,6 +33,14 @@ export default class Fragment {
             }
         }
     }
+
+    partialHandle (fn) {
+        let self = this;
+
+        return function (args=[], final=false) {
+            return self.handle(fn, args, final);
+        }
+    }
 }
 
 Fragment.ID_COUNTER = 1;
